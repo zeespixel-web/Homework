@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARYAN'S PANEL | Workbook 28</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --void: #06080e;
+      --deep-space: #0a0e1a;
+      --panel-bg: rgba(8, 14, 30, 0.88);
+      --panel-border: rgba(0, 200, 255, 0.15);
+      --neon-cyan: #00d4ff;
+      --neon-blue: #0066ff;
+      --neon-purple: #7b2fff;
+      --neon-green: #00ff88;
+      --neon-pink: #ff2d95;
+      --text-primary: #d0e8ff;
+      --text-dim: #5a7a9a;
+      --glow-cyan: 0 0 20px rgba(0, 212, 255, 0.4);
+      --glow-blue: 0 0 25px rgba(0, 102, 255, 0.35);
+      --glow-purple: 0 0 20px rgba(123, 47, 255, 0.4);
+      --font-heading: 'Orbitron', sans-serif;
+      --font-body: 'Rajdhani', sans-serif;
+      --font-mono: 'Share Tech Mono', monospace;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--void);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    ::selection { background: rgba(0, 212, 255, 0.35); color: #fff; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--void); }
+    ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 3px; }
+
+        #matrix {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      opacity: 0.12;
+    }
+
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background-image:
+        linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .scan-line {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+      z-index: 2;
+      animation: scanDown 6s linear infinite;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    @keyframes scanDown {
+      0% { top: -3px; }
+      100% { top: 100%; }
+    }
+
+    header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: linear-gradient(180deg, rgba(0, 20, 50, 0.9) 0%, transparent 100%);
+      border-bottom: 1px solid var(--panel-border);
+    }
+
+    .logo {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--neon-cyan);
+      text-shadow: var(--glow-cyan);
+      letter-spacing: 3px;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .logo .dot {
+      width: 8px; height: 8px;
+      background: var(--neon-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--neon-cyan);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    .page-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      border: 1px solid rgba(0, 212, 255, 0.15);
+      padding: 0.3rem 0.8rem;
+      border-radius: 3px;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 100;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 26px; height: 2px;
+      background: var(--neon-cyan);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 6px var(--neon-cyan);
+    }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    nav a {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--neon-cyan);
+      box-shadow: 0 0 6px var(--neon-cyan);
+      transition: width 0.3s ease;
+    }
+    nav a:hover { color: var(--neon-cyan); }
+    nav a:hover::after { width: 100%; }
+
+    main {
+      position: relative;
+      z-index: 5;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 3rem 0 2rem;
+    }
+    .hero h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue), var(--neon-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.3));
+      margin-bottom: 0.5rem;
+    }
+    .hero .subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    .hero .line {
+      width: 120px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+      margin: 1.2rem auto 0;
+    }
+
+    .sentence-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .sentence-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-blue), var(--neon-purple));
+    }
+    .sentence-card .label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--neon-cyan);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .sentence-card .label::before {
+      content: '▸';
+      color: var(--neon-green);
+    }
+    .sentence-card p {
+      font-size: 1.15rem;
+      line-height: 1.9;
+      color: var(--text-primary);
+    }
+    .sentence-card .highlight {
+      color: var(--neon-cyan);
+      font-weight: 600;
+      text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--neon-cyan);
+      margin: 2.5rem 0 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .section-title::before {
+      content: '';
+      width: 30px; height: 1px;
+      background: var(--neon-cyan);
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--panel-border), transparent);
+    }
+
+    .words-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1rem;
+    }
+
+    .word-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      padding: 1.2rem 1.4rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .word-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: var(--neon-blue);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .word-card:hover {
+      border-color: rgba(0, 212, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 212, 255, 0.08);
+    }
+    .word-card:hover::before { opacity: 1; }
+
+    .word-card .num {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      margin-bottom: 0.4rem;
+    }
+
+    .word-card .word {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--neon-cyan);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 0.15rem;
+    }
+
+    .word-card .phonetic {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--neon-purple);
+      margin-bottom: 0.5rem;
+      opacity: 0.85;
+    }
+
+    .word-card .synonym-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .word-card .synonyms {
+      font-size: 0.88rem;
+      color: var(--text-primary);
+      margin-bottom: 0.6rem;
+    }
+
+    .word-card .sentence {
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      line-height: 1.6;
+      border-top: 1px solid rgba(0, 212, 255, 0.12);
+      padding-top: 0.5rem;
+      font-style: italic;
+      opacity: 0.9;
+    }
+
+    footer {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid var(--panel-border);
+      background: linear-gradient(0deg, rgba(0, 20, 50, 0.6) 0%, transparent 100%);
+    }
+    footer p {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    footer .accent { color: var(--neon-cyan); }
+
+    .glitch {
+      position: relative;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: inherit;
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    .glitch::before {
+      -webkit-text-fill-color: rgba(0, 212, 255, 0.6);
+      animation: glitch-1 3s infinite linear;
+      clip-path: inset(0 0 80% 0);
+    }
+    .glitch::after {
+      -webkit-text-fill-color: rgba(123, 47, 255, 0.5);
+      animation: glitch-2 2.5s infinite linear;
+      clip-path: inset(80% 0 0 0);
+    }
+    @keyframes glitch-1 {
+      0%, 100% { clip-path: inset(0 0 95% 0); transform: translate(0); }
+      20% { clip-path: inset(20% 0 60% 0); transform: translate(-2px, 1px); }
+      40% { clip-path: inset(50% 0 30% 0); transform: translate(2px, -1px); }
+      60% { clip-path: inset(70% 0 10% 0); transform: translate(-1px, 1px); }
+      80% { clip-path: inset(10% 0 80% 0); transform: translate(1px, -1px); }
+    }
+    @keyframes glitch-2 {
+      0%, 100% { clip-path: inset(95% 0 0 0); transform: translate(0); }
+      20% { clip-path: inset(60% 0 20% 0); transform: translate(2px, -1px); }
+      40% { clip-path: inset(30% 0 50% 0); transform: translate(-2px, 1px); }
+      60% { clip-path: inset(10% 0 70% 0); transform: translate(1px, -1px); }
+      80% { clip-path: inset(80% 0 10% 0); transform: translate(-1px, 1px); }
+    }
+
+    .particle {
+      position: fixed;
+      width: 2px; height: 2px;
+      background: var(--neon-cyan);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      animation: float-particle 8s ease-in-out infinite;
+    }
+    @keyframes float-particle {
+      0% { opacity: 0; transform: translateY(100vh) scale(0); }
+      20% { opacity: 0.6; }
+      80% { opacity: 0.6; }
+      100% { opacity: 0; transform: translateY(-20vh) scale(1); }
+    }
+
+    .shooting-star {
+      position: fixed;
+      width: 80px; height: 1px;
+      background: linear-gradient(90deg, var(--neon-cyan), transparent);
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0;
+      animation: shoot 4s ease-in infinite;
+    }
+    @keyframes shoot {
+      0% { opacity: 0; transform: translateX(0) translateY(0) rotate(-35deg); }
+      10% { opacity: 1; }
+      100% { opacity: 0; transform: translateX(500px) translateY(300px) rotate(-35deg); }
+    }
+
+    @media (max-width: 768px) {
+      html { font-size: 14px; }
+      header { padding: 0.8rem 1rem; }
+      .hamburger { display: flex; }
+      nav {
+        position: fixed;
+        top: 0; right: -100%;
+        width: 70%; max-width: 280px;
+        height: 100vh;
+        background: rgba(6, 8, 14, 0.97);
+        border-left: 1px solid var(--panel-border);
+        flex-direction: column;
+        padding: 5rem 2rem 2rem;
+        gap: 1.8rem;
+        transition: right 0.35s ease;
+        z-index: 50;
+        backdrop-filter: blur(12px);
+      }
+      nav.open { right: 0; }
+      nav a { font-size: 0.85rem; }
+      .page-tag { display: none; }
+      .words-grid { grid-template-columns: 1fr; }
+      main { padding: 1.5rem 1rem 3rem; }
+      .sentence-card { padding: 1.4rem; }
+      .hero h1 { letter-spacing: 3px; }
+    }
+
+    @media (max-width: 400px) {
+      .hero h1 { font-size: 1.6rem; letter-spacing: 2px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      #matrix { display: none; }
+      .scan-line { display: none; }
+    }
+
+    .nav-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 45;
+    }
+    .nav-overlay.active { display: block; }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+  <div class="grid-overlay"></div>
+  <div class="scan-line"></div>
+
+  <header>
+    <div class="logo">
+      <span class="dot"></span>
+      ARYAN'S PANEL
+    </div>
+    <span class="page-tag">WORKBOOK PAGE 28</span>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="nav">
+      <a href="#overview">Overview</a>
+      <a href="#words">Vocabulary</a>
+    </nav>
+  </header>
+  <div class="nav-overlay" id="navOverlay"></div>
+
+  <main>
+    <section class="hero" id="overview">
+      <h1 class="glitch" data-text="ARYAN'S PANEL">ARYAN'S PANEL</h1>
+      <div class="line"></div>
+    </section>
+
+    <div class="section-title" id="words">Important Word</div>
+
+    <div class="words-grid">
+
+      <div class="word-card">
+        <div class="num">001</div>
+        <div class="word">Stereotype</div>
+        <div class="phonetic">/ˈster.i.ə.taɪp/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Generalization, Cliché, Oversimplification</div>
+        <div class="sentence">The old stereotype that coders are all antisocial has been proven wrong.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">002</div>
+        <div class="word">Multinational</div>
+        <div class="phonetic">/ˌmʌl.tiˈnæʃ.ən.əl/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Global, International, Transnational</div>
+        <div class="sentence">She got a job at a multinational company that operates in over thirty countries.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">003</div>
+        <div class="word">Conglomerate</div>
+        <div class="phonetic">/kənˈɡlɒm.ər.ət/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Corporation, Syndicate, Megacorp</div>
+        <div class="sentence">This conglomerate owns businesses in shipping, tech, and satellite networks.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">004</div>
+        <div class="word">Subcontractor</div>
+        <div class="phonetic">/ˌsʌb.kənˈtræk.tər/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Outsourced worker, Freelancer, Third-party provider</div>
+        <div class="sentence">The subcontractor completed the wiring work two weeks before the deadline.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">005</div>
+        <div class="word">Hint</div>
+        <div class="phonetic">/hɪnt/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Clue, Suggestion, Pointer</div>
+        <div class="sentence">He gave a small hint about the surprise party during lunch.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">006</div>
+        <div class="word">Corporation</div>
+        <div class="phonetic">/ˌkɔːr.pəˈreɪ.ʃən/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Enterprise, Firm, Establishment</div>
+        <div class="sentence">The corporation announced a new work-from-home policy for all employees.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">007</div>
+        <div class="word">Discipline</div>
+        <div class="phonetic">/ˈdɪs.ə.plɪn/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Self-control, Restraint, Rigour</div>
+        <div class="sentence">Good discipline is the quiet force behind every successful project.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">008</div>
+        <div class="word">Grievance</div>
+        <div class="phonetic">/ˈɡriː.vəns/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Complaint, Objection, Protest</div>
+        <div class="sentence">She filed a grievance after receiving an unfair performance review.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">009</div>
+        <div class="word">Fundamentally</div>
+        <div class="phonetic">/ˌfʌn.dəˈmen.təl.i/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Basically, Essentially, At its core</div>
+        <div class="sentence">The system is fundamentally broken and needs to be rebuilt from scratch.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">010</div>
+        <div class="word">Flawed</div>
+        <div class="phonetic">/flɔːd/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Defective, Imperfect, Buggy</div>
+        <div class="sentence">The flawed design of the app caused thousands of errors.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">011</div>
+        <div class="word">Ladder</div>
+        <div class="phonetic">/ˈlæd.ər/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Climb, Ascent, Stepladder</div>
+        <div class="sentence">Climbing the corporate ladder takes patience and good instincts.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">012</div>
+        <div class="word">Hierarchy</div>
+        <div class="phonetic">/ˈhaɪ.ə.rɑːr.ki/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Rank structure, Order, Pecking order</div>
+        <div class="sentence">Every hierarchy has unspoken rules that new people must learn fast.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">013</div>
+        <div class="word">Promoted</div>
+        <div class="phonetic">/prəˈmoʊ.tɪd/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Elevated, Advanced, Uplifted</div>
+        <div class="sentence">After five years of stellar work, she was finally promoted to team lead.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">014</div>
+        <div class="word">Pounding</div>
+        <div class="phonetic">/ˈpaʊn.dɪŋ/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Battering, Hammering, Striking</div>
+        <div class="sentence">The pounding rain made it impossible to hear anything over the roof.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">015</div>
+        <div class="word">Shut out</div>
+        <div class="phonetic">/ʃʌt aʊt/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Excluded, Barred, Locked out</div>
+        <div class="sentence">Talented developers were shut out of meetings that shaped the product.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">016</div>
+        <div class="word">Needless</div>
+        <div class="phonetic">/ˈniːd.ləs/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Unnecessary, Unwarranted, Avoidable</div>
+        <div class="sentence">The needless complexity in the codebase slowed every sprint to a crawl.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">017</div>
+        <div class="word">Incompetence</div>
+        <div class="phonetic">/ɪnˈkɒm.pɪ.təns/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Inability, Incapacity, Unfitness</div>
+        <div class="sentence">Their incompetence with version control cost the team an entire week.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">018</div>
+        <div class="word">Invariably</div>
+        <div class="phonetic">/ɪnˈveə.ri.ə.bli/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Always, Consistently, Every time</div>
+        <div class="sentence">The deployment invariably fails on Friday afternoons.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">019</div>
+        <div class="word">Fulfilling</div>
+        <div class="phonetic">/fʊlˈfɪl.ɪŋ/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Satisfying, Rewarding, Enriching</div>
+        <div class="sentence">Mentoring junior developers has been the most fulfilling part of my career.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">020</div>
+        <div class="word">Inherently</div>
+        <div class="phonetic">/ɪnˈhɪə.rənt.li/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Naturally, Intrinsically, By nature</div>
+        <div class="sentence">Distributed systems are inherently complex — accept it or suffer.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">021</div>
+        <div class="word">Aspects</div>
+        <div class="phonetic">/ˈæs.pɛkts/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Elements, Facets, Dimensions</div>
+        <div class="sentence">Every aspect of the design was reviewed before the final launch.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">022</div>
+        <div class="word">Interruptions</div>
+        <div class="phonetic">/ˌɪn.təˈrʌp.ʃənz/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Disruptions, Distractions, Break-ins</div>
+        <div class="sentence">Constant interruptions during deep work can tank your productivity for hours.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">023</div>
+        <div class="word">Disastrous</div>
+        <div class="phonetic">/dɪˈzɑːs.trəs/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Catastrophic, Devastating, Ruinous</div>
+        <div class="sentence">A single disastrous merge can undo weeks of careful development.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">024</div>
+        <div class="word">Lifeblood</div>
+        <div class="phonetic">/ˈlaɪf.blʌd/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Life force, Vitality, Core support</div>
+        <div class="sentence">Clean data is the lifeblood of any machine learning pipeline.</div>
+      </div>
+
+      <div class="word-card">
+        <div class="num">025</div>
+        <div class="word">Rat Race</div>
+        <div class="phonetic">/ræt reɪs/</div>
+        <div class="synonym-label">Synonym</div>
+        <div class="synonyms">Grind, Endless chase, Treadmill</div>
+        <div class="sentence">He quit the corporate rat race to build his own startup from scratch.</div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <p><span class="accent">ARYAN'S PANEL</span> — WORKBOOK PAGE 28</p>
+  </footer>
+
+  <script>
+   
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    let columns, drops;
+    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
+
+    function initMatrix() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const fontSize = 14;
+      columns = Math.floor(canvas.width / fontSize);
+      drops = Array(columns).fill(1);
+    }
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(6, 8, 14, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00d4ff';
+      ctx.font = '14px monospace';
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * 14, drops[i] * 14);
+        if (drops[i] * 14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+
+    initMatrix();
+    setInterval(drawMatrix, 50);
+    window.addEventListener('resize', initMatrix);
+
+   
+    const hamburger = document.getElementById('hamburger');
+    const nav = document.getElementById('nav');
+    const navOverlay = document.getElementById('navOverlay');
+
+    function toggleNav() {
+      hamburger.classList.toggle('active');
+      nav.classList.toggle('open');
+      navOverlay.classList.toggle('active');
+    }
+
+    hamburger.addEventListener('click', toggleNav);
+    navOverlay.addEventListener('click', toggleNav);
+    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', toggleNav));
+
+    
+    function createParticles() {
+      for (let i = 0; i < 20; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.animationDelay = Math.random() * 8 + 's';
+        p.style.animationDuration = (6 + Math.random() * 6) + 's';
+        document.body.appendChild(p);
+      }
+    }
+    createParticles();
+
+   
+    function createShootingStars() {
+      setInterval(() => {
+        const star = document.createElement('div');
+        star.className = 'shooting-star';
+        star.style.top = Math.random() * 40 + 'vh';
+        star.style.left = Math.random() * 60 + 'vw';
+        star.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+        document.body.appendChild(star);
+        setTimeout(() => star.remove(), 4000);
+      }, 5000);
+    }
+    createShootingStars();
+  </script>
+</body>
+</html>
